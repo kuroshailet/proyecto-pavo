@@ -1,0 +1,97 @@
+{% extends 'layout.html' %}
+
+
+{% block body %}
+    
+    <div class="row">
+        <label></label>
+        <div class="col-md-5 pt-md-4">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+            {% for category, message in messages %}
+                
+        <!-- Modal -->
+        <div class="modal fade" id="Modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        {% if category == 'success' %}
+                            <img src="/static/images/check.png" class="img-fluid" alt="Responsive image" style="width: 50px;">
+                            <h5 class="modal-title" id="exampleModalLabel"style="margin-left: 20px; margin-top: 10px;">Usuario valido</h5>
+                        {% endif %}
+                        {% if category == 'error' %}
+                            <img src="/static/images/cancel.png" class="img-fluid" alt="Responsive image" style="width: 50px;">
+                            <h5 class="modal-title" id="exampleModalLabel" style="margin-left: 20px; margin-top: 10px;">Usuario invalido</h5>
+                        {% endif %}
+
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+
+                    </div>
+                    <div class="modal-body">
+                        {% if category == 'error' %}
+                        <h6 class="text-center">Información del Usuario</h6><br>
+                        <h6>Num. de cedula: {{message.split('/')[0]}}</h6>
+                        <h6>Lugar: {{message.split('/')[1]}}</h6>
+                        <h6>Fecha/hora: {{message.split('/')[2]}}</h6><br>
+                        <h6>El usuario no tiene permitido el acceso.</h6>
+                        {% endif %}
+                        {% if category == 'success' %}
+                        {{message}}
+                        {% endif %}
+                    </div>
+                    <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+
+            {% endfor %}
+            {% endif %}
+            {% endwith %}
+            
+            <div class="card card-body">
+                <form action="/add" method="POST"autocomplete="off">
+
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+
+                    <div class="form-group">
+                        <input type="text" name="cedula" placeholder="Cédula" class="form form-control" required>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary btn-block">Buscar</button>
+                      
+                </form>
+
+            </div>
+        </div>
+
+        <div class="col-md-8 pt-md-5">
+                <div class="form-group">
+                        <label>Últimos usuarios registrados.</label>
+                    </div>
+            <table class="table table-striped table-bordered bg-white table-sm">
+                <thead>
+                    <tr>
+                        <td>Cédula</td>
+                        <td>Lugar</td>
+                        <td>Fecha/Hora</td>
+                    </tr>
+                </thead>
+                <body>
+                    {% for user in users %}
+                        <tr>
+                            <td>{{ user.1 }}</td>
+                            <td>{{ user.2 }}</td>
+                            <td>{{ user.3 }}</td>
+                        </tr> 
+                    {% endfor %}
+                </body>
+            </table>
+        </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,27 @@
+{% extends 'layout.html' %}
+
+
+{% block body %}
+    
+    <div class="row">
+      
+        <div class="col-md-5">
+            <div class="card card-body">
+                <form action="/place/update/{{place.0}}" method="POST" autocomplete="off">
+                   
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+
+                    <div class="form-group">
+                        <input type="text" name="nombre" placeholder="Nombre" class="form form-control" value="{{place.1}}" required>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary btn-block">Guardar</button>
+                      
+                </form>
+
+            </div>
+        </div>
+
+    </div>
+
+{% endblock %}
