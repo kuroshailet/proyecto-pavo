@@ -26,12 +26,24 @@
               <a class="nav-link" href="/">Inicio</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="/user">Usuarios</a>
+              <a class="nav-link" href="/profile">Perfil</a>
             </li>
-            <li class="nav-item">
-                <a class="nav-link" href="/place">Lugares</a>
+            {% if session['role'] == 'Administrador' %}
+              <li class="nav-item">
+                <a class="nav-link" href="/user">Usuarios</a>
               </li>
-           
+              <li class="nav-item">
+                  <a class="nav-link" href="/place">Lugares</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="/">Reportes</a>
+              </li>
+            {% endif %}
+            {% if  session['role'] == 'Colaborador' %}
+              <li class="nav-item">
+                <a class="nav-link" href="/">Reportes</a>
+              </li>
+            {% endif %}
           </ul>
           <form class="form-inline my-2 my-lg-0">
             

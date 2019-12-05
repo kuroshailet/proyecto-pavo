@@ -23,6 +23,16 @@ def Index():
     else:
         return redirect(url_for('Login'))
 
+@app.route('/profile')
+def Profile():
+    if 'email' in session:
+        cur = mysql.connection.cursor()
+        cur.execute('SELECT username FROM user WHERE email = "' + session['email'] + '" limit 1')
+        data = cur.fetchone()[0]
+        return render_template('profile.html', username = data)
+    else:
+        return redirect(url_for('Login'))
+
 @app.route('/add', methods=['POST'])
 def Add():
     if request.method == 'POST':
@@ -48,10 +58,13 @@ def Add():
 @app.route('/user')
 def UserIndex():
     if 'email' in session:
-        cur = mysql.connection.cursor()
-        cur.execute('SELECT * FROM user')
-        data = cur.fetchall()
-        return render_template('index-user.html', users = data)
+        if session['role'] == 'Administrador':
+            cur = mysql.connection.cursor()
+            cur.execute('SELECT * FROM user')
+            data = cur.fetchall()
+            return render_template('index-user.html', users = data)
+        else:
+            return redirect(url_for('Index'))
     else:
         return redirect(url_for('Login'))
 
@@ -111,10 +124,13 @@ def UserDelete(id):
 @app.route('/place')
 def PlaceIndex():
     if 'email' in session:
-        cur = mysql.connection.cursor()
-        cur.execute('SELECT * FROM place')
-        data = cur.fetchall()
-        return render_template('index-place.html', places = data)
+        if session['role'] == 'Administrador':
+            cur = mysql.connection.cursor()
+            cur.execute('SELECT * FROM place')
+            data = cur.fetchall()
+            return render_template('index-place.html', places = data)
+        else:
+            return redirect(url_for('Index'))
     else:
         return redirect(url_for('Login'))
 
@@ -177,8 +193,9 @@ def Login():
 @app.route('/logout')
 def Logout():
     if 'email' in session:
-        session.pop('email')
-        session.pop('place')       
+        session.pop('email', None)
+        session.pop('place', None) 
+        session.pop('role', None)       
     return redirect(url_for('Login'))
 
 @app.route('/login/auth', methods=['POST'])
@@ -188,14 +205,18 @@ def UserAuth():
         password = request.form['password']
         place = request.form['place']
         cur = mysql.connection.cursor()
-        cur.execute('SELECT password role FROM user WHERE email = "' + email + '" limit 1')
+        cur.execute('SELECT password FROM user WHERE email = "' + email + '" limit 1')
         count = cur.rowcount
         if count > 0: 
             data = cur.fetchone()[0]
             verif = check_password_hash(data,password)
             if verif:
+                cur.execute('SELECT role FROM user WHERE email = "' + email + '" limit 1')
+                role = cur.fetchone()[0]
                 session['email'] = email
                 session['place'] = place
+                session['role'] = role
+                
             else:
                 flash('El correo o la contraseña son incorrectos.','error')   
         else:
@@ -203,7 +224,7 @@ def UserAuth():
     return redirect(url_for('Index'))   
 
 if __name__ == '__main__':
-    app.run(debug = False)
+    app.run(debug = True)
 
 
 

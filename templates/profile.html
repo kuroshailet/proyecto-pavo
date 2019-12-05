@@ -1,0 +1,28 @@
+{% extends 'layout.html' %}
+
+
+{% block body %}
+    
+    <div class="row">
+        <div class="col-md-7">
+            <table class="table table-bordered bg-white table-sm">
+                    <div class="form-group">
+                            <label>Información del usuario</label>
+                    </div>         
+                    <tr>
+                        <td>Nombre: </td>
+                        <td>{{username}}</td>
+                    </tr>
+                    <tr>
+                        <td>Email: </td>
+                        <td>{{ session['email'] }}</td>
+                    </tr>   
+                    <tr>
+                        <td>Lugar: </td>
+                        <td>{{ session['place'] }}</td>
+                    </tr>               
+            </table>
+        </div>
+    </div>
+
+{% endblock %}
